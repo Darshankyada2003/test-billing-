@@ -1,83 +1,105 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { toWords } from 'number-to-words';
+import logo from './assets/1.jpg';
 
-// Define styles
 const styles = StyleSheet.create({
     page: {
-        padding: 20,
+        padding: 30,
         fontSize: 10,
         fontFamily: 'Helvetica',
+        lineHeight: 1.4,
     },
-    textCenter: {
-        textAlign: 'center',
+    header: {
+        borderBottomWidth: 1,
+        borderColor: '#333',
+        paddingBottom: 10,
+        marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
-    textBold: {
+    logo: {
+        width: 60,
+        height: 60,
+    },
+    companyName: {
+        fontSize: 20,
         fontWeight: 'bold',
+        color: '#1F4E79',
+        textAlign: 'center',
+        flex: 1,
     },
-    textSm: {
+    contactInfo: {
         fontSize: 8,
+        textAlign: 'right',
     },
-    textLg: {
-        fontSize: 16,
-    },
-    border: {
-        borderColor: 'black',
+    sectionTitle: {
+        backgroundColor: '#1F4E79',
+        color: 'white',
+        padding: 4,
+        fontSize: 10,
+        fontWeight: 'bold',
+        marginTop: 10,
     },
     table: {
         display: 'table',
         width: '100%',
+        borderStyle: 'solid',
         borderWidth: 1,
-        borderColor: 'black',
-        marginTop: 10,
+        borderColor: '#333',
+        marginTop: 5,
     },
     tableRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
     },
-    tableCell: {
-        padding: 4,
-        flex: 1,
-        borderWidth: 1,
-        borderColor: 'black',
-        fontSize: 10,
-    },
-    header: {
-        fontSize: 16,
-        marginBottom: 4,
-        textAlign: 'center',
+    tableHeader: {
+        backgroundColor: '#DCE6F1',
         fontWeight: 'bold',
     },
-    subText: {
-        fontSize: 8,
-        textAlign: 'center',
+    tableCell: {
+        padding: 5,
+        flex: 1,
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#333',
+        fontSize: 9,
     },
-    label: {
-        width: '25%',
-        padding: 4,
-    },
-    value: {
-        width: '75%',
-        padding: 4,
-    },
-    footerRow: {
+    totalBox: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        borderWidth: 1,
+        borderColor: '#333',
+        padding: 10,
+    },
+    totalLeft: {
+        width: '45%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    totalRight: {
+        width: '45%',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+    },
+    signatureBox: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 30,
     },
-    half: {
-        width: '50%',
-        padding: 10,
+    signatureSection: {
+        width: '45%',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
 
-// Function to convert numbers to words
 const toWordsFormatted = (amount) => {
-    const [intPart, decimalPart] = amount.toFixed(2).split('.');
-    return `${toWords(parseInt(intPart))} ${decimalPart !== '00' ? `and ${decimalPart}/100` : ''}`
-        .replace(/\b\w/g, (l) => l.toUpperCase());
+    const [intPart, decimalPart] = amount.toFixed(2).split('.')
+    return `${toWords(parseInt(intPart))} ${decimalPart !== '00' ? `and ${decimalPart}/100` : ''}`.replace(/\b\w/g, l => l.toUpperCase());
 };
 
-// Main InvoicePDF component
 const InvoicePDF = ({ form, items }) => {
     const subTotal = items.reduce((sum, i) => sum + i.qty * i.rate, 0);
     const CGST = form.isInterState ? 0 : subTotal * 0.09;
@@ -89,130 +111,114 @@ const InvoicePDF = ({ form, items }) => {
         <Document>
             <Page size="A4" style={styles.page}>
 
-                <View style={{ marginBottom: 10 }}>
-                    {/* Top Centered Line */}
-                    <View style={{ alignItems: 'center', marginBottom: 5 }}>
-                        <Text style={{ fontSize: 10, fontWeight: 'bold' }}>|| Jay Shree Krishna ||</Text>
+                <View style={styles.header}>
+                    <View style={styles.leftHeader}>
+                        <Image src={logo} style={styles.logo} />
+                        <Text style={styles.gstinTopLeft}>GSTIN: 29ABBFG0549C1ZP</Text>
                     </View>
-
-                    {/* GST Left, Name Center-Left, Address Right */}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        {/* Left Side: GST and Company Name */}
-                        <View style={{ width: '60%' }}>
-                            <Text style={{ fontSize: 8 }}>GSTIN: 29ABBFG0549C1ZP</Text>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 2 }}>GANESH INFRA</Text>
-                        </View>
-
-                        {/* Right Side: Address */}
-                        <View style={{ width: '40%' }}>
-                            <Text style={{ fontSize: 8, textAlign: 'right' }}>
-                                SY NO 183/2,183/3,{'\n'}
-                                MahadevakoDigahalli (V), Jala Hobli,{'\n'}
-                                Yelahanka Taluk, Bengaluru Urban,{'\n'}
-                                Karnataka - 562149{'\n'}
-                                Mob: 97505 93505, 97250 13660
-                            </Text>
-                        </View>
+                    <View style={styles.centerHeader}>
+                        <Text style={styles.companyName}>GANESH INFRA</Text>
+                    </View>
+                    <View style={styles.rightHeader}>
+                        <Text style={styles.contactInfo}>
+                            SY NO 183/2, 183/3,{"\n"}Mahadevako Digahalli (V), Jala Hobli,{"\n"}Yelahanka Taluk, Bengaluru Urban,{"\n"}Karnataka - 562149{"\n"}Mob: 97505 93505, 97250 13660
+                        </Text>
                     </View>
                 </View>
 
+                <Text style={styles.sectionTitle}>Invoice Details</Text>
                 <View style={styles.table}>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Invoice No: {form.invoiceNo}</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Transportation Mode: {form.transportationMode}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Invoice No: {form.invoiceNo}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Transportation Mode: {form.transportationMode}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Invoice Date: {form.invoiceDate}</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Vehicle No: {form.vehicleNo}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Invoice Date: {form.invoiceDate}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Vehicle No: {form.vehicleNo}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>State: {form.customerState} Code: Gujarat</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Date of supply: {form.invoiceDate}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>State: {form.customerState} Code: {form.stateCode}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Date of supply: {form.invoiceDate}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '100%' }]}>Place of supply: {form.placeOfSupply}</Text>
+                        <Text style={[styles.tableCell, { flex: 2 }]}>Place of supply: {form.placeOfSupply}</Text>
                     </View>
                 </View>
 
-                {/* Receiver and Consignee Details */}
+                <Text style={styles.sectionTitle}>Customer Details</Text>
                 <View style={styles.table}>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%', fontWeight: 'bold' }]}>Invoice To (Details of Receiver)</Text>
-                        <Text style={[styles.tableCell, { width: '50%', fontWeight: 'bold' }]}>Consignee (Details of Deliver To)</Text>
+                        <Text style={[styles.tableCell, styles.tableHeader]}>Invoice To</Text>
+                        <Text style={[styles.tableCell, styles.tableHeader]}>Consignee</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Name: {form.customerName}</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Name: {form.customerName}</Text>
+                        <Text style={styles.tableCell}>Name: {form.customerName}</Text>
+                        <Text style={styles.tableCell}>Name: {form.customerName}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Address: {form.customerAddress}</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>Address: {form.customerAddress}</Text>
+                        <Text style={styles.tableCell}>Address: {form.customerAddress}</Text>
+                        <Text style={styles.tableCell}>Address: {form.customerAddress}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>State: {form.customerState} Code: Gujarat</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>State: {form.customerState} Code: Gujarat</Text>
+                        <Text style={styles.tableCell}>State: {form.customerState}</Text>
+                        <Text style={styles.tableCell}>State: {form.customerState}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>GSTIN: {form.customerGstin}</Text>
-                        <Text style={[styles.tableCell, { width: '50%' }]}>GSTIN: {form.customerGstin}</Text>
+                        <Text style={styles.tableCell}>GSTIN: {form.customerGstin}</Text>
+                        <Text style={styles.tableCell}>GSTIN: {form.customerGstin}</Text>
                     </View>
                 </View>
 
-                {/* Invoice Item Details */}
+                <Text style={styles.sectionTitle}>Itemized Details</Text>
                 <View style={styles.table}>
-                    <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { width: '10%' }]}>S.No</Text>
-                        <Text style={[styles.tableCell, { width: '40%' }]}>Description Of Product</Text>
-                        <Text style={[styles.tableCell, { width: '10%' }]}>HSN</Text>
-                        <Text style={[styles.tableCell, { width: '10%' }]}>Qty</Text>
-                        <Text style={[styles.tableCell, { width: '10%' }]}>Unit</Text>
-                        <Text style={[styles.tableCell, { width: '10%' }]}>Rate</Text>
-                        <Text style={[styles.tableCell, { width: '10%' }]}>Amount</Text>
+                    <View style={[styles.tableRow, styles.tableHeader]}>
+                        <Text style={[styles.tableCell, { flex: 0.5 }]}>S.No</Text>
+                        <Text style={[styles.tableCell, { flex: 2 }]}>Description</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>HSN</Text>
+                        <Text style={[styles.tableCell, { flex: 0.8 }]}>Qty</Text>
+                        <Text style={[styles.tableCell, { flex: 0.8 }]}>Unit</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Rate</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Amount</Text>
                     </View>
                     {items.map((item, i) => (
                         <View key={i} style={styles.tableRow}>
-                            <Text style={[styles.tableCell, { width: '10%' }]}>{i + 1}</Text>
-                            <Text style={[styles.tableCell, { width: '40%' }]}>{item.description}</Text>
-                            <Text style={[styles.tableCell, { width: '10%' }]}>{item.hsn}</Text>
-                            <Text style={[styles.tableCell, { width: '10%' }]}>{item.qty}</Text>
-                            <Text style={[styles.tableCell, { width: '10%' }]}>{item.unit}</Text>
-                            <Text style={[styles.tableCell, { width: '10%' }]}>{item.rate.toFixed(2)}</Text>
-                            <Text style={[styles.tableCell, { width: '10%' }]}>{(item.qty * item.rate).toFixed(2)}</Text>
+                            <Text style={[styles.tableCell, { flex: 0.5 }]}>{i + 1}</Text>
+                            <Text style={[styles.tableCell, { flex: 2 }]}>{item.description}</Text>
+                            <Text style={[styles.tableCell, { flex: 1 }]}>{item.hsn}</Text>
+                            <Text style={[styles.tableCell, { flex: 0.8 }]}>{item.qty}</Text>
+                            <Text style={[styles.tableCell, { flex: 0.8 }]}>{item.unit}</Text>
+                            <Text style={[styles.tableCell, { flex: 1 }]}>{item.rate.toFixed(2)}</Text>
+                            <Text style={[styles.tableCell, { flex: 1 }]}>{(item.qty * item.rate).toFixed(2)}</Text>
                         </View>
                     ))}
                 </View>
 
-                {/* Total Summary Section */}
-                <View style={[styles.tableRow, { marginTop: 10, borderWidth: 1, borderColor: 'black' }]}>
-                    <View style={{ width: '50%', borderRightWidth: 1, borderColor: 'black', justifyContent: 'center', padding: 5 }}>
-                        <Text style={{ fontWeight: 'bold' }}>Total Invoice Amount in words:</Text>
-                        <Text style={{ marginTop: 30, textAlign: 'center' }}>{toWordsFormatted(total)}</Text>
+                <View style={styles.totalBox}>
+                    <View style={styles.totalLeft}>
+                        <Text style={{ fontWeight: 'bold' }}>Total Invoice Amount in Words:</Text>
+                        <Text style={{ marginTop: 10, textAlign: 'center' }}>{toWordsFormatted(total)}</Text>
                     </View>
-                    <View style={{ width: '50%' }}>
-                        <View style={styles.tableRow}><Text style={styles.tableCell}>Sub Total</Text><Text style={styles.tableCell}>{subTotal.toFixed(2)}</Text></View>
-                        <View style={styles.tableRow}><Text style={styles.tableCell}>CGST (9%)</Text><Text style={styles.tableCell}>{CGST.toFixed(2)}</Text></View>
-                        <View style={styles.tableRow}><Text style={styles.tableCell}>SGST (9%)</Text><Text style={styles.tableCell}>{SGST.toFixed(2)}</Text></View>
-                        <View style={styles.tableRow}><Text style={styles.tableCell}>IGST (18%)</Text><Text style={styles.tableCell}>{IGST.toFixed(2)}</Text></View>
-                        <View style={styles.tableRow}><Text style={[styles.tableCell, styles.textBold]}>Total</Text><Text style={[styles.tableCell, styles.textBold]}>{total.toFixed(2)}</Text></View>
+                    <View style={styles.totalRight}>
+                        <Text>Sub Total: {subTotal.toFixed(2)}</Text>
+                        <Text>CGST (9%): {CGST.toFixed(2)}</Text>
+                        <Text>SGST (9%): {SGST.toFixed(2)}</Text>
+                        <Text>IGST (18%): {IGST.toFixed(2)}</Text>
+                        <Text style={{ fontWeight: 'bold', marginTop: 5 }}>Total: {total.toFixed(2)}</Text>
                     </View>
                 </View>
 
-                <View style={[styles.tableRow, { marginTop: 10, borderWidth: 1, borderColor: 'black', height: 100 }]}>
-                    {/* Customer Signature Box */}
-                    <View style={{ width: '50%', borderRightWidth: 1, borderColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={[styles.textBold]}>Customer's Signature</Text>
+                <View style={styles.signatureBox}>
+                    <View style={styles.signatureSection}>
+                        <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>Customer's Signature</Text>
+                        <View style={{ borderTopWidth: 1, borderColor: '#333', width: '100%', marginTop: 10 }} />
                     </View>
-
-                    {/* Ganesh Infra + Partner Signature Box */}
-                    <View style={{ width: '50%', justifyContent: 'space-between', paddingVertical: 8 }}>
-                        <View style={{ alignItems: 'center' }}>
-                            <Text style={[styles.textBold]}>For: GANESH INFRA</Text>
-                        </View>
-                        <View style={{ alignItems: 'center' }}>
-                            <Text>Partner Signature</Text>
-                        </View>
+                    <View style={styles.signatureSection}>
+                        <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>For: GANESH INFRA</Text>
+                        <Text style={{ textAlign: 'center', marginTop: 5 }}>Partner Signature</Text>
+                        <View style={{ borderTopWidth: 1, borderColor: '#333', width: '100%', marginTop: 10 }} />
                     </View>
                 </View>
+
 
             </Page>
         </Document>
