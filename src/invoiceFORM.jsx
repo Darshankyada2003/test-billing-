@@ -1,4 +1,3 @@
-// InvoiceForm.jsx
 import React, { useState } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import InvoicePDF from './invoicePDF';
@@ -17,7 +16,9 @@ const InvoiceForm = () => {
         isInterState: false,
     });
 
-    const [items, setItems] = useState([{ description: '', hsn: '', Unit: '', qty: 1, rate: 0 }]);
+    const [items, setItems] = useState([
+        { description: '', hsn: '', Unit: '', qty: 1, rate: 0 }
+    ]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -27,12 +28,19 @@ const InvoiceForm = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updated = [...items];
-updated[index][name] = ['description', 'Unit'].includes(name) ? value : parseFloat(value);
+        updated[index][name] = ['description', 'Unit', 'hsn'].includes(name) ? value : parseFloat(value);
         setItems(updated);
     };
 
     const addItem = () => {
         setItems([...items, { description: '', hsn: '', Unit: '', qty: 1, rate: 0 }]);
+    };
+
+    const removeItem = (index) => {
+        if (items.length === 1) return;
+        const updated = [...items];
+        updated.splice(index, 1);
+        setItems(updated);
     };
 
     const generatePDF = async (e) => {
@@ -49,40 +57,145 @@ updated[index][name] = ['description', 'Unit'].includes(name) ? value : parseFlo
     };
 
     return (
-        <form onSubmit={generatePDF} className="max-w-4xl mx-auto p-6 bg-white shadow rounded space-y-6">
-            <h2 className="text-2xl font-bold">Create Invoice</h2>
+        <form onSubmit={generatePDF} className="max-w-5xl mx-auto p-6 bg-white shadow-xl rounded-lg space-y-6">
+            <h2 className="text-3xl font-bold text-center text-gray-700">Create Invoice</h2>
 
-            <div className="grid grid-cols-2 gap-4">
-                <input name="invoiceNo" placeholder="Invoice No" onChange={handleChange} required className="input" />
-                <input name="invoiceDate" type="date" onChange={handleChange} required className="input" />
-                <input name="vehicleNo" placeholder="Vehicle No" onChange={handleChange} required className="input" />
-                <input name="transportationMode" placeholder="Transportation Mode" onChange={handleChange} required className="input" />
-                <input name="placeOfSupply" placeholder="Place of Supply" onChange={handleChange} required className="input" />
+            <div className="grid grid-cols-2 gap-6">
+                {[
+                    { label: "Invoice No", name: "invoiceNo", type: "text" },
+                    { label: "Invoice Date", name: "invoiceDate", type: "date" },
+                    { label: "Vehicle No", name: "vehicleNo", type: "text" },
+                    { label: "Transportation Mode", name: "transportationMode", type: "text" },
+                    { label: "Place of Supply", name: "placeOfSupply", type: "text" },
+                ].map(({ label, name, type }) => (
+                    <div key={name}>
+                        <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+                        <input
+                            name={name}
+                            type={type}
+                            value={form[name]}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                        />
+                    </div>
+                ))}
             </div>
 
-            <div className="grid grid-cols-1 gap-2">
-                <h3 className="text-xl font-semibold">Customer Details</h3>
-                <input name="customerName" placeholder="Customer Name" onChange={handleChange} required className="input" />
-                <textarea name="customerAddress" placeholder="Address" onChange={handleChange} required className="input" />
-                <input name="customerState" placeholder="State" onChange={handleChange} required className="input" />
-                <input name="customerGstin" placeholder="GSTIN" onChange={handleChange} className="input" />
+            <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-700">Customer Details</h3>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Customer Name</label>
+                    <input
+                        name="customerName"
+                        value={form.customerName}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Customer Address</label>
+                    <textarea
+                        name="customerAddress"
+                        value={form.customerAddress}
+                        onChange={handleChange}
+                        required
+                        rows={3}
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-1">Customer State</label>
+                        <input
+                            name="customerState"
+                            value={form.customerState}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-1">Customer GSTIN</label>
+                        <input
+                            name="customerGstin"
+                            value={form.customerGstin}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                    <input
+                        type="checkbox"
+                        name="isInterState"
+                        checked={form.isInterState}
+                        onChange={handleChange}
+                        className="accent-blue-600"
+                    />
+                    <label className="text-gray-700">Inter-State Transaction (Enable IGST)</label>
+                </div>
             </div>
 
             <div>
-                <h3 className="text-xl font-semibold mb-2">Items</h3>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Items</h3>
                 {items.map((item, idx) => (
-                    <div key={idx} className="grid grid-cols-4 gap-2 mb-2">
-                        <input name="description" placeholder="Description" onChange={(e) => handleItemChange(idx, e)} required className="input" />
-                        <input name="hsn" placeholder="HSN" onChange={(e) => handleItemChange(idx, e)} required className="input" />
-                        <input name="Unit" placeholder="Unit" onChange={(e) => handleItemChange(idx, e)} required className="input" />
-                        <input name="qty" type="number" placeholder="Qty" onChange={(e) => handleItemChange(idx, e)} required className="input" />
-                        <input name="rate" type="number" placeholder="Rate" onChange={(e) => handleItemChange(idx, e)} required className="input" />
+                    <div key={idx} className="grid grid-cols-6 gap-2 items-end mb-2">
+                        {[
+                            { name: 'description', placeholder: 'Description' },
+                            { name: 'hsn', placeholder: 'HSN' },
+                            { name: 'Unit', placeholder: 'Unit' },
+                            { name: 'qty', placeholder: 'Qty', type: 'number' },
+                            { name: 'rate', placeholder: 'Rate', type: 'number' },
+                        ].map(({ name, placeholder, type = 'text' }) => (
+                            <input
+                                key={name}
+                                name={name}
+                                type={type}
+                                placeholder={placeholder}
+                                value={item[name]}
+                                onChange={(e) => handleItemChange(idx, e)}
+                                required
+                                className="px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                            />
+                        ))}
+
+                        {items.length > 1 && (
+                            <button
+                                type="button"
+                                onClick={() => removeItem(idx)}
+                                className="text-red-500 hover:text-red-700 font-bold"
+                                title="Remove item"
+                            >
+                                ✕
+                            </button>
+                        )}
                     </div>
                 ))}
-                <button type="button" onClick={addItem} className="mt-2 px-4 py-1 bg-blue-500 text-white rounded">+ Add Item</button>
+
+                <button
+                    type="button"
+                    onClick={addItem}
+                    className="mt-2 px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded"
+                >
+                    + Add Item
+                </button>
             </div>
 
-            <button type="submit" className="mt-4 px-6 py-2 bg-green-600 text-white rounded">Generate & Download Invoice PDF</button>
+            <div className="text-center">
+                <button
+                    type="submit"
+                    className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-lg font-semibold"
+                >
+                    Generate & Download Invoice PDF
+                </button>
+            </div>
         </form>
     );
 };
