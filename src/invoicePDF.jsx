@@ -100,6 +100,14 @@ const toWordsFormatted = (amount) => {
     return `${toWords(parseInt(intPart))} ${decimalPart !== '00' ? `and ${decimalPart}/100` : ''}`.replace(/\b\w/g, l => l.toUpperCase());
 };
 
+const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
 const InvoicePDF = ({ form, items }) => {
     const subTotal = items.reduce((sum, i) => sum + i.qty * i.rate, 0);
     const CGST = form.isInterState ? 0 : subTotal * 0.09;
@@ -133,12 +141,12 @@ const InvoicePDF = ({ form, items }) => {
                         <Text style={[styles.tableCell, { flex: 1 }]}>Transportation Mode: {form.transportationMode}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { flex: 1 }]}>Invoice Date: {form.invoiceDate}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Invoice Date: {formatDate(form.invoiceDate)}</Text>
                         <Text style={[styles.tableCell, { flex: 1 }]}>Vehicle No: {form.vehicleNo}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={[styles.tableCell, { flex: 1 }]}>State: {form.customerState} Code: {form.stateCode}</Text>
-                        <Text style={[styles.tableCell, { flex: 1 }]}>Date of supply: {form.invoiceDate}</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>State: {form.customerState} Code: 29</Text>
+                        <Text style={[styles.tableCell, { flex: 1 }]}>Date of supply: {formatDate(form.invoiceDate)}</Text>
                     </View>
                     <View style={styles.tableRow}>
                         <Text style={[styles.tableCell, { flex: 2 }]}>Place of supply: {form.placeOfSupply}</Text>
