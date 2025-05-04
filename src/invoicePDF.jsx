@@ -168,8 +168,8 @@ const InvoicePDF = ({ form, items }) => {
                         <Text style={styles.tableCell}>Address: {form.customerAddress}</Text>
                     </View>
                     <View style={styles.tableRow}>
-                        <Text style={styles.tableCell}>State: {form.customerState}</Text>
-                        <Text style={styles.tableCell}>State: {form.customerState}</Text>
+                        <Text style={styles.tableCell}>State: {form.customerState}Code: 29</Text>
+                        <Text style={styles.tableCell}>State: {form.customerState}Code: 29</Text>
                     </View>
                     <View style={styles.tableRow}>
                         <Text style={styles.tableCell}>GSTIN: {form.customerGstin}</Text>
