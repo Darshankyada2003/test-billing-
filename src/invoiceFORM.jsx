@@ -17,7 +17,7 @@ const InvoiceForm = () => {
     });
 
     const [items, setItems] = useState([
-        { description: '', hsn: '', Unit: '', qty: 1, rate: 0 }
+        { description: '', hsn: '', unit: '', qty: 1, rate: 0 }
     ]);
 
     const handleChange = (e) => {
@@ -28,12 +28,12 @@ const InvoiceForm = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updated = [...items];
-        updated[index][name] = ['description', 'Unit', 'hsn'].includes(name) ? value : parseFloat(value);
+        updated[index][name] = ['description', 'unit', 'hsn'].includes(name) ? value : parseFloat(value);
         setItems(updated);
     };
 
     const addItem = () => {
-        setItems([...items, { description: '', hsn: '', Unit: '', qty: 1, rate: 0 }]);
+        setItems([...items, { description: '', hsn: '', unit: '', qty: 1, rate: 0 }]);
     };
 
     const removeItem = (index) => {
@@ -150,7 +150,7 @@ const InvoiceForm = () => {
                         {[
                             { name: 'description', placeholder: 'Description' },
                             { name: 'hsn', placeholder: 'HSN' },
-                            { name: 'Unit', placeholder: 'Unit' },
+                            { name: 'unit', placeholder: 'unit' },
                             { name: 'qty', placeholder: 'Qty', type: 'number' },
                             { name: 'rate', placeholder: 'Rate', type: 'number' },
                         ].map(({ name, placeholder, type = 'text' }) => (
